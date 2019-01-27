@@ -61,6 +61,9 @@ if __name__ == '__main__':
 		read_text("temp2.png")
 	elif args["preprocess"]=="enhance":
 		enhance_image(args["image"])
+	elif args["preprocess"]=="grayscale_enhance":
+		convert_to_grayscale(args["image"])
+		enhance_image("temp2.png")
 	elif args["preprocess"]=="all":
 		overlay_blend(args["image"])
 		convert_to_grayscale("temp1.png")
