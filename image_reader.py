@@ -25,6 +25,15 @@ def overlay_blend(image_path):
 
 	img_blended.save("temp1.png")
 
+def enhance_image(image_path):
+	img = Image.open(image_path)
+	width, height = img.size
+	new_size = width*6, height*6
+	img = img.resize(new_size, Image.LANCZOS)
+	img = img.convert('L')
+	img = img.point(lambda x: 0 if x < 155 else 255, '1')
+	read_text(image_path, img)
+
 def read_text(image_path, image_obj=None):
 	img = Image.open(image_path) if not image_obj else image_obj
 	imagetext = pytesseract.image_to_string(img)
@@ -50,6 +59,12 @@ if __name__ == '__main__':
 	elif args["preprocess"]=="grayscale":
 		convert_to_grayscale(args["image"])
 		read_text("temp2.png")
+	elif args["preprocess"]=="enhance":
+		enhance_image(args["image"])
+	elif args["preprocess"]=="all":
+		overlay_blend(args["image"])
+		convert_to_grayscale("temp1.png")
+		enhance_image("temp2.png")
 	else:
 		read_text(args["image"])
 
