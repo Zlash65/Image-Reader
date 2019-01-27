@@ -38,8 +38,25 @@ def read_text(image_path, image_obj=None):
 	img = Image.open(image_path) if not image_obj else image_obj
 	imagetext = pytesseract.image_to_string(img)
 
-	# x = re.findall('\Name\s([^\s]+)', imagetext)
-	print(imagetext)
+	output = {}
+	re_templates = {
+		"Name": ['\Name\s([^\n]+)', '\Name\s([^\s]+)', '\Patient\sName\s([^\n]+)'],
+		"Date": ['\Dated[:\-\s]+([^\n|^\s]+)', '\Date[:\-\s]+([^\n|^\s]+)'],
+		"Gender": ['\Gender[:\-\s]+([^\n|^\s]+)'],
+		"Age": ['\Age[:\-\s]+([^\n|^\s]+)'],
+		"Haemoglobin hb, blood": ['haemoglobin[(hb)(blood)\s]+([^\n]+)'],
+		"Serum Creatinine": ['serum|creatinine[\s]+([^\n]+)']
+	}
+
+	for key in re_templates:
+		for match in re_templates[key]:
+			temp = filter(None, re.findall("(?i)"+match, imagetext))
+			if temp: break
+
+		if temp:
+			output[key] = temp[0]
+
+	print(output)
 
 if __name__ == '__main__':
 	from sys import argv
