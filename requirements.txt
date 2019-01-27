@@ -1,0 +1,5 @@
+pillow
+pytesseract
+numpy
+tesseract
+tessseract-ocr
