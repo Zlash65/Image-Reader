@@ -3,6 +3,20 @@ import pytesseract
 import os, re, sys, cv2
 from PIL import Image
 
+def convert_to_grayscale(img_path):
+	# Read image with opencv
+	img = cv2.imread(img_path)
+
+	# Convert to gray
+	img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	# Apply dilation and erosion to remove some noise
+	kernel = np.ones((1, 1), np.uint8)
+	img = cv2.dilate(img, kernel, iterations=1)
+	img = cv2.erode(img, kernel, iterations=1)
+
+	# Write the image after apply opencv to do some ...
+	cv2.imwrite("temp2.png", img)
+
 def overlay_blend(image_path):
 	from PIL import Image
 	correctionVal = 0.05 # fraction of white to add to the main image
@@ -33,10 +47,17 @@ if __name__ == '__main__':
 	if args["preprocess"]=="blend":
 		overlay_blend(args["image"])
 		read_text("temp1.png")
+	elif args["preprocess"]=="grayscale":
+		convert_to_grayscale(args["image"])
+		read_text("temp2.png")
 	else:
 		read_text(args["image"])
 
 	# remove temporary files
-	os.remove("temp1.png")
+	for i in ["temp1.png", "temp2.png"]:
+		try:
+			os.remove(i)
+		except Exception:
+			continue
 
 	print('\n------ Done -------')
